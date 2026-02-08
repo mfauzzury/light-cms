@@ -10,14 +10,16 @@ class SettingsSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            'site_name' => config('app.name', 'Light CMS'),
+            'site_name' => 'Araken Light-CMS',
             'site_tagline' => 'A minimal, secure Laravel CMS',
             'site_email' => 'admin@lightcms.local',
-            'site_description' => 'Light CMS is a minimal and secure content management system built with Laravel and Filament.',
+            'site_description' => 'Araken Light-CMS is a minimal and secure content management system built with Laravel and Filament.',
             'site_logo' => '',
             'site_favicon' => '',
             'posts_per_page' => '10',
-            'footer_text' => '© ' . date('Y') . ' Light CMS. All rights reserved.',
+            'homepage_type' => 'posts',
+            'homepage_page_id' => '',
+            'footer_text' => '© ' . date('Y') . ' Araken Light-CMS. All rights reserved.',
             'facebook_url' => '',
             'twitter_url' => '',
             'instagram_url' => '',

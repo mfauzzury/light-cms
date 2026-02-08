@@ -38,6 +38,8 @@ class ManageSettings extends Page implements HasForms
             'site_logo' => Setting::get('site_logo', ''),
             'site_favicon' => Setting::get('site_favicon', ''),
             'posts_per_page' => Setting::get('posts_per_page', '10'),
+            'homepage_type' => Setting::get('homepage_type', 'posts'),
+            'homepage_page_id' => Setting::get('homepage_page_id', ''),
             'footer_text' => Setting::get('footer_text', ''),
             'facebook_url' => Setting::get('facebook_url', ''),
             'twitter_url' => Setting::get('twitter_url', ''),
@@ -79,6 +81,30 @@ class ManageSettings extends Page implements HasForms
                                     ->minValue(1)
                                     ->maxValue(100),
                             ])->columns(2),
+
+                        Forms\Components\Tabs\Tab::make('Reading')
+                            ->icon('heroicon-o-document-text')
+                            ->schema([
+                                Forms\Components\Radio::make('homepage_type')
+                                    ->label('Homepage Display')
+                                    ->options([
+                                        'posts' => 'Your latest posts',
+                                        'page' => 'A static page',
+                                    ])
+                                    ->default('posts')
+                                    ->live()
+                                    ->helperText('Choose what to display on your homepage'),
+                                Forms\Components\Select::make('homepage_page_id')
+                                    ->label('Select Homepage')
+                                    ->options(function () {
+                                        return \App\Models\Content::where('type', 'page')
+                                            ->where('status', 'published')
+                                            ->pluck('title', 'id');
+                                    })
+                                    ->searchable()
+                                    ->visible(fn (Forms\Get $get): bool => $get('homepage_type') === 'page')
+                                    ->helperText('Select which page to show as your homepage'),
+                            ]),
 
                         Forms\Components\Tabs\Tab::make('Branding')
                             ->icon('heroicon-o-photo')

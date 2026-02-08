@@ -31,37 +31,36 @@
         </div>
     @endif
 
-    <article class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <article>
+        {{-- Title --}}
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">{{ $content->title }}</h1>
+
+        {{-- Meta Information --}}
+        <div class="flex items-center text-xs text-gray-500 mb-6 pb-4 border-b border-gray-200">
+            <span>{{ $content->author->name }}</span>
+            <span class="mx-2">•</span>
+            <time datetime="{{ $content->published_at->toDateString() }}">
+                {{ $content->published_at->format('M j, Y') }}
+            </time>
+            @if($content->type)
+                <span class="mx-2">•</span>
+                <span class="capitalize">{{ $content->type }}</span>
+            @endif
+        </div>
+
         {{-- Featured Image --}}
         @if($content->hasMedia('featured_image'))
-            <div class="w-full">
+            <div class="mb-6">
                 <img
                     src="{{ $content->getFirstMediaUrl('featured_image', 'large') }}"
                     alt="{{ $content->title }}"
-                    class="w-full h-96 object-cover"
+                    class="w-full max-h-96 object-cover rounded"
                 >
             </div>
         @endif
 
-        <div class="p-8">
-            {{-- Title --}}
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $content->title }}</h1>
-
-            {{-- Meta Information --}}
-            <div class="flex items-center text-sm text-gray-500 mb-8 pb-8 border-b border-gray-200">
-                <span>By {{ $content->author->name }}</span>
-                <span class="mx-2">•</span>
-                <time datetime="{{ $content->published_at->toDateString() }}">
-                    {{ $content->published_at->format('F j, Y') }}
-                </time>
-                @if($content->type)
-                    <span class="mx-2">•</span>
-                    <span class="capitalize">{{ $content->type }}</span>
-                @endif
-            </div>
-
-            {{-- Content Blocks --}}
-            <div class="prose prose-lg max-w-none">
+        {{-- Content Blocks --}}
+        <div class="prose max-w-none">
                 @if(isset($content->content_json['blocks']) && is_array($content->content_json['blocks']))
                     @foreach($content->content_json['blocks'] as $block)
                         @if(isset($block['type']))
@@ -72,16 +71,12 @@
                     <p class="text-gray-500">No content available.</p>
                 @endif
             </div>
+
+        {{-- Back to Home --}}
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <a href="{{ route('home') }}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium">
+                ← Back to Home
+            </a>
         </div>
     </article>
-
-    {{-- Back to Home --}}
-    <div class="mt-8">
-        <a href="{{ route('home') }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Home
-        </a>
-    </div>
 @endsection

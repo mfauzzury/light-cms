@@ -8,10 +8,28 @@ use Illuminate\Http\Request;
 class ContentController extends Controller
 {
     /**
-     * Display the homepage with latest published posts.
+     * Display the homepage - either latest posts or a static page.
      */
     public function index()
     {
+        $homepageType = setting('homepage_type', 'posts');
+
+        // If homepage is set to a static page
+        if ($homepageType === 'page') {
+            $pageId = setting('homepage_page_id');
+
+            if ($pageId) {
+                $content = Content::published()
+                    ->where('type', 'page')
+                    ->find($pageId);
+
+                if ($content) {
+                    return view('frontend.show', compact('content'));
+                }
+            }
+        }
+
+        // Default: show latest posts
         $posts = Content::published()
             ->posts()
             ->orderBy('published_at', 'desc')
