@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Disallow admin area
+Disallow: /admin
+Disallow: /admin/*
+
+# Disallow preview URLs
+Disallow: /preview
+Disallow: /preview/*
+
+# Sitemap location
+Sitemap: http://localhost/sitemap.xml
