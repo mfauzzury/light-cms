@@ -39,6 +39,11 @@ class AdminPanelProvider extends PanelProvider
         FilamentView::registerRenderHook(
             PanelsRenderHook::HEAD_END,
             fn (): string => Blade::render('<style>
+                /* Use system fonts instead of Bunny Fonts */
+                * {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+                }
+
                 /* White backgrounds */
                 .fi-body, .fi-main, .fi-sidebar, .fi-sidebar-nav { background-color: white !important; }
                 .fi-page { background: white !important; }
@@ -141,6 +146,66 @@ class AdminPanelProvider extends PanelProvider
                 .fi-sidebar-nav > ul > li:first-child:not(.fi-sidebar-group) {
                     margin-top: 0.75rem !important;
                 }
+
+                /* JSON Editor - Code Editor Style */
+                textarea[data-field-wrapper-label*="Template Data"],
+                textarea[id*="template_data"] {
+                    background-color: #1e1e1e !important;
+                    color: #d4d4d4 !important;
+                    font-family: "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace !important;
+                    font-size: 13px !important;
+                    line-height: 1.6 !important;
+                    padding: 16px !important;
+                    border: 1px solid #3e3e3e !important;
+                    border-radius: 6px !important;
+                    tab-size: 2 !important;
+                }
+
+                /* JSON Editor - Focus state */
+                textarea[data-field-wrapper-label*="Template Data"]:focus,
+                textarea[id*="template_data"]:focus {
+                    background-color: #252526 !important;
+                    border-color: #007acc !important;
+                    outline: none !important;
+                    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.1) !important;
+                }
+
+                /* JSON Editor - Placeholder */
+                textarea[data-field-wrapper-label*="Template Data"]::placeholder,
+                textarea[id*="template_data"]::placeholder {
+                    color: #6a737d !important;
+                    opacity: 0.7 !important;
+                }
+
+                /* JSON Editor - Selection */
+                textarea[data-field-wrapper-label*="Template Data"]::selection,
+                textarea[id*="template_data"]::selection {
+                    background-color: #264f78 !important;
+                    color: #ffffff !important;
+                }
+
+                /* JSON Editor - Scrollbar */
+                textarea[data-field-wrapper-label*="Template Data"]::-webkit-scrollbar,
+                textarea[id*="template_data"]::-webkit-scrollbar {
+                    width: 12px !important;
+                    height: 12px !important;
+                }
+
+                textarea[data-field-wrapper-label*="Template Data"]::-webkit-scrollbar-track,
+                textarea[id*="template_data"]::-webkit-scrollbar-track {
+                    background: #1e1e1e !important;
+                }
+
+                textarea[data-field-wrapper-label*="Template Data"]::-webkit-scrollbar-thumb,
+                textarea[id*="template_data"]::-webkit-scrollbar-thumb {
+                    background: #424242 !important;
+                    border-radius: 6px !important;
+                }
+
+                textarea[data-field-wrapper-label*="Template Data"]::-webkit-scrollbar-thumb:hover,
+                textarea[id*="template_data"]::-webkit-scrollbar-thumb:hover {
+                    background: #4e4e4e !important;
+                }
             </style>'),
         );
 
@@ -163,6 +228,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
+            ->font(false)
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('13rem')

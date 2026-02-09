@@ -11,8 +11,8 @@
 @extends('layouts.frontend', compact('metaTitle', 'metaDescription', 'canonicalUrl', 'ogTitle', 'ogDescription', 'ogType', 'ogImage'))
 
 @section('content')
-    {{-- Preview Banner --}}
-    @if(request()->routeIs('content.preview'))
+    {{-- Preview Banner (only show for unpublished content) --}}
+    @if(request()->routeIs('content.preview') && $content->status !== 'published')
         <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
             <div class="flex items-center">
                 <svg class="w-5 h-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -25,42 +25,65 @@
                             {{ ucfirst($content->status) }}
                         </span>
                     </p>
-                    <p class="text-xs text-yellow-700 mt-1">You are viewing a preview. This content may not be published yet.</p>
+                    <p class="text-xs text-yellow-700 mt-1">You are viewing a preview. This content is not published yet.</p>
                 </div>
             </div>
         </div>
     @endif
 
-    <article>
-        {{-- Title --}}
-        <h1 class="text-3xl font-bold text-gray-900 mb-3">{{ $content->title }}</h1>
+    {{-- Template rendering (if template is used) --}}
+    @if($content->usesTemplate())
 
-        {{-- Meta Information --}}
-        <div class="flex items-center text-xs text-gray-500 mb-6 pb-4 border-b border-gray-200">
-            <span>{{ $content->author->name }}</span>
-            <span class="mx-2">•</span>
-            <time datetime="{{ $content->published_at->toDateString() }}">
-                {{ $content->published_at->format('M j, Y') }}
-            </time>
-            @if($content->type)
-                <span class="mx-2">•</span>
-                <span class="capitalize">{{ $content->type }}</span>
+        {{-- Render each section from template_data --}}
+        @foreach($content->getTemplateSections() as $section)
+            @if(!empty($section['type']) && !empty($section['data']))
+                <x-dynamic-component
+                    :component="'sections.' . $section['type']"
+                    :data="$section['data']"
+                />
             @endif
+        @endforeach
+
+        {{-- Back to Home --}}
+        <div class="max-w-4xl mx-auto px-4 mt-8 pt-6 border-t border-gray-200">
+            <a href="{{ route('home') }}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium">
+                ← Back to Home
+            </a>
         </div>
 
-        {{-- Featured Image --}}
-        @if($content->hasMedia('featured_image'))
-            <div class="mb-6">
-                <img
-                    src="{{ $content->getFirstMediaUrl('featured_image', 'large') }}"
-                    alt="{{ $content->title }}"
-                    class="w-full max-h-96 object-cover rounded"
-                >
-            </div>
-        @endif
+    @else
 
-        {{-- Content Blocks --}}
-        <div class="prose max-w-none">
+        {{-- Traditional Editor.js block rendering --}}
+        <article>
+            {{-- Title --}}
+            <h1 class="text-3xl font-bold text-gray-900 mb-3">{{ $content->title }}</h1>
+
+            {{-- Meta Information --}}
+            <div class="flex items-center text-xs text-gray-500 mb-6 pb-4 border-b border-gray-200">
+                <span>{{ $content->author->name }}</span>
+                <span class="mx-2">•</span>
+                <time datetime="{{ $content->published_at->toDateString() }}">
+                    {{ $content->published_at->format('M j, Y') }}
+                </time>
+                @if($content->type)
+                    <span class="mx-2">•</span>
+                    <span class="capitalize">{{ $content->type }}</span>
+                @endif
+            </div>
+
+            {{-- Featured Image --}}
+            @if($content->hasMedia('featured_image'))
+                <div class="mb-6">
+                    <img
+                        src="{{ $content->getFirstMediaUrl('featured_image', 'large') }}"
+                        alt="{{ $content->title }}"
+                        class="w-full max-h-96 object-cover rounded"
+                    >
+                </div>
+            @endif
+
+            {{-- Content Blocks --}}
+            <div class="prose max-w-none">
                 @if(isset($content->content_json['blocks']) && is_array($content->content_json['blocks']))
                     @foreach($content->content_json['blocks'] as $block)
                         @if(isset($block['type']))
@@ -72,11 +95,13 @@
                 @endif
             </div>
 
-        {{-- Back to Home --}}
-        <div class="mt-8 pt-6 border-t border-gray-200">
-            <a href="{{ route('home') }}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium">
-                ← Back to Home
-            </a>
-        </div>
-    </article>
+            {{-- Back to Home --}}
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <a href="{{ route('home') }}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium">
+                    ← Back to Home
+                </a>
+            </div>
+        </article>
+
+    @endif
 @endsection

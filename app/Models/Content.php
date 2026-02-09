@@ -27,6 +27,8 @@ class Content extends Model implements HasMedia
         'title',
         'slug',
         'content_json',
+        'template',
+        'template_data',
         'status',
         'published_at',
         'meta_title',
@@ -47,6 +49,7 @@ class Content extends Model implements HasMedia
     {
         return [
             'content_json' => 'array',
+            'template_data' => 'array',
             'published_at' => 'datetime',
         ];
     }
@@ -89,7 +92,10 @@ class Content extends Model implements HasMedia
     public function scopePublished($query)
     {
         return $query->where('status', 'published')
-            ->where('published_at', '<=', now());
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                  ->orWhere('published_at', '<=', now());
+            });
     }
 
     /**
@@ -106,6 +112,34 @@ class Content extends Model implements HasMedia
     public function scopePosts($query)
     {
         return $query->where('type', 'post');
+    }
+
+    /**
+     * Check if content uses a template (vs Editor.js blocks).
+     */
+    public function usesTemplate(): bool
+    {
+        return !empty($this->template);
+    }
+
+    /**
+     * Get template sections for rendering.
+     */
+    public function getTemplateSections(): array
+    {
+        if (!$this->usesTemplate()) {
+            return [];
+        }
+
+        return $this->template_data['sections'] ?? [];
+    }
+
+    /**
+     * Scope: Query contents using a specific template.
+     */
+    public function scopeUsingTemplate($query, string $template)
+    {
+        return $query->where('template', $template);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Forms\Components\EditorJS;
 use App\Filament\Resources\PageResource\Pages;
 use App\Models\Content;
+use App\Services\TemplateRegistry;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -51,19 +52,38 @@ class PageResource extends Resource
                             ])
                             ->required()
                             ->default('draft'),
-                        Forms\Components\DateTimePicker::make('published_at')
-                            ->label('Publish Date'),
                         Forms\Components\Select::make('author_id')
                             ->relationship('author', 'name')
                             ->required()
                             ->default(auth()->id()),
                     ])->columns(2),
 
+                Forms\Components\Section::make('Template (Optional)')
+                    ->description('Use a pre-built template or keep default Editor.js blocks')
+                    ->schema([
+                        Forms\Components\Select::make('template')
+                            ->label('Template')
+                            ->options(TemplateRegistry::getTemplateOptions())
+                            ->default('none')
+                            ->live()
+                            ->helperText('Select a template or keep "No Template" to use Editor.js blocks'),
+
+                        Forms\Components\Textarea::make('template_data')
+                            ->label('Template Data (JSON)')
+                            ->rows(15)
+                            ->helperText('Paste AI-generated JSON structure here, or manually edit section data')
+                            ->visible(fn (Forms\Get $get): bool => $get('template') !== 'none' && $get('template') !== null)
+                            ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : $state)
+                            ->dehydrateStateUsing(fn ($state) => json_decode($state, true))
+                            ->rule('json'),
+                    ])->columns(1),
+
                 Forms\Components\Section::make('Content Editor')
+                    ->visible(fn (Forms\Get $get): bool => $get('template') === 'none' || $get('template') === null)
                     ->schema([
                         EditorJS::make('content_json')
                             ->label('Content')
-                            ->required(),
+                            ->required(fn (Forms\Get $get): bool => $get('template') === 'none' || $get('template') === null),
                     ]),
 
                 Forms\Components\Section::make('Featured Image')
@@ -129,7 +149,7 @@ class PageResource extends Resource
                     ->label('Published')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -155,8 +175,10 @@ class PageResource extends Resource
                 Tables\Actions\Action::make('preview')
                     ->icon('heroicon-o-eye')
                     ->iconButton()
-                    ->tooltip('Preview')
-                    ->url(fn (Content $record) => route('content.preview', $record->slug))
+                    ->tooltip(fn (Content $record) => $record->status === 'published' ? 'View Page' : 'Preview')
+                    ->url(fn (Content $record) => $record->status === 'published'
+                        ? route('content.show', $record->slug)
+                        : route('content.preview', $record->slug))
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make()
                     ->iconButton()

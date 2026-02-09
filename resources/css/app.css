@@ -1,3 +1,85 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    /* Glass Effect */
+    .glass {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .glass-dark {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Gradient Text */
+    .gradient-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500;
+    }
+
+    /* Modern Gradient Backgrounds */
+    .gradient-primary {
+        @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50;
+    }
+
+    .gradient-primary-dark {
+        @apply bg-gradient-to-br from-primary-500 to-primary-700;
+    }
+
+    /* Smooth Scroll */
+    .smooth-scroll {
+        scroll-behavior: smooth;
+    }
+
+    /* Micro-interaction: Button Press */
+    .btn-press {
+        @apply active:scale-95 transition-transform duration-100;
+    }
+
+    /* Micro-interaction: Card Lift */
+    .card-lift {
+        @apply hover:-translate-y-1 hover:shadow-soft-lg transition-all duration-300;
+    }
+
+    /* Stagger Animation Delays */
+    .stagger-1 {
+        animation-delay: 0.1s;
+    }
+    .stagger-2 {
+        animation-delay: 0.2s;
+    }
+    .stagger-3 {
+        animation-delay: 0.3s;
+    }
+    .stagger-4 {
+        animation-delay: 0.4s;
+    }
+}
+
+@layer base {
+    /* Accessibility: Respect prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+
+    /* Modern smooth scrolling */
+    html {
+        @apply smooth-scroll;
+    }
+
+    /* Improved focus states */
+    *:focus-visible {
+        @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+    }
+}
