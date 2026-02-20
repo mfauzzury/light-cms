@@ -38,7 +38,9 @@ class AdminPanelProvider extends PanelProvider
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::HEAD_END,
-            fn (): string => Blade::render('<style>
+            function (): string {
+            $logoSubtitle = e(setting('logo_subtitle', 'by Araken'));
+            return Blade::render('<style>
                 /* Use system fonts instead of Bunny Fonts */
                 * {
                     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
@@ -62,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
                 }
 
                 .fi-sidebar-header .fi-logo::after {
-                    content: "by Araken";
+                    content: "' . $logoSubtitle . '";
                     font-size: 0.625rem;
                     font-weight: 400;
                     color: #6b7280;
@@ -206,7 +208,8 @@ class AdminPanelProvider extends PanelProvider
                 textarea[id*="template_data"]::-webkit-scrollbar-thumb:hover {
                     background: #4e4e4e !important;
                 }
-            </style>'),
+            </style>');
+            },
         );
 
         FilamentView::registerRenderHook(
@@ -223,7 +226,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('Light-CMS')
+            ->brandName(fn () => setting('site_name', 'Light-CMS'))
+            ->brandLogo(fn () => setting('site_logo') ? asset('storage/' . setting('site_logo')) : null)
+            ->brandLogoHeight('2rem')
             ->login()
             ->colors([
                 'primary' => Color::Blue,

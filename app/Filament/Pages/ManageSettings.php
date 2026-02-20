@@ -36,6 +36,7 @@ class ManageSettings extends Page implements HasForms
             'site_email' => Setting::get('site_email', ''),
             'site_description' => Setting::get('site_description', ''),
             'site_logo' => Setting::get('site_logo', ''),
+            'logo_subtitle' => Setting::get('logo_subtitle', ''),
             'site_favicon' => Setting::get('site_favicon', ''),
             'posts_per_page' => Setting::get('posts_per_page', '10'),
             'homepage_type' => Setting::get('homepage_type', 'posts'),
@@ -114,7 +115,14 @@ class ManageSettings extends Page implements HasForms
                                     ->image()
                                     ->maxSize(2048)
                                     ->directory('branding')
-                                    ->helperText('Upload your site logo (max 2MB)'),
+                                    ->helperText('Used in admin sidebar and frontend header (max 2MB)')
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('logo_subtitle')
+                                    ->label('Logo Subtitle')
+                                    ->maxLength(100)
+                                    ->placeholder('e.g. by Araken')
+                                    ->helperText('Small text displayed beneath the logo in the admin sidebar')
+                                    ->columnSpanFull(),
                                 Forms\Components\FileUpload::make('site_favicon')
                                     ->label('Favicon')
                                     ->image()

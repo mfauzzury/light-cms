@@ -151,8 +151,12 @@ class NotificationResource extends Resource
                     ->label('Active'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit'),
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Delete'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

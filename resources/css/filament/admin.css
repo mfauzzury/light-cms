@@ -1,0 +1,44 @@
+/* Force white backgrounds throughout admin panel */
+.fi-body,
+.fi-main,
+.fi-sidebar,
+.fi-sidebar-nav,
+[x-cloak] {
+    background-color: white !important;
+}
+
+/* Main content area */
+.fi-main {
+    background: white !important;
+}
+
+/* Page wrapper */
+.fi-page {
+    background: white !important;
+}
+
+/* Tables and lists */
+.fi-ta-content,
+.fi-wi-stats-overview {
+    background: white !important;
+}
+
+/* Forms */
+.fi-fo-section-content {
+    background: white !important;
+}
+
+/* Cards and panels */
+.fi-section,
+.fi-card {
+    background: white !important;
+}
+
+/* Remove gray tints */
+.bg-gray-50 {
+    background-color: white !important;
+}
+
+.bg-gray-100 {
+    background-color: #f9fafb !important;
+}

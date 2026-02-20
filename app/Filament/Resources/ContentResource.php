@@ -165,13 +165,17 @@ class ContentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->label('Edit'),
+                    ->iconButton()
+                    ->tooltip('Edit'),
                 Tables\Actions\Action::make('preview')
-                    ->label('Preview')
                     ->icon('heroicon-o-eye')
+                    ->iconButton()
+                    ->tooltip('Preview')
                     ->url(fn (Content $record) => route('content.preview', $record->slug))
                     ->openUrlInNewTab(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Delete'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
